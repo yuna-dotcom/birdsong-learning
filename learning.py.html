@@ -1,0 +1,76 @@
+<html>
+<head>
+<title>learning.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #2aacb8;}
+.s4 { color: #7a7e85;}
+.s5 { color: #6aab73;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+learning.py</font>
+</center></td></tr></table>
+<pre><span class="s0">import </span><span class="s1">numpy </span><span class="s0">as </span><span class="s1">np</span>
+<span class="s0">import </span><span class="s1">librosa</span>
+<span class="s0">import </span><span class="s1">random</span>
+<span class="s0">from </span><span class="s1">audio </span><span class="s0">import </span><span class="s1">save_wav</span>
+
+<span class="s1">SAMPLE_RATE </span><span class="s2">= </span><span class="s3">44100</span>
+
+<span class="s0">def </span><span class="s1">mfcc_error</span><span class="s2">(</span><span class="s1">wave_a</span><span class="s2">, </span><span class="s1">wave_b</span><span class="s2">):</span>
+    <span class="s1">mfcc_a </span><span class="s2">= </span><span class="s1">librosa</span><span class="s2">.</span><span class="s1">feature</span><span class="s2">.</span><span class="s1">mfcc</span><span class="s2">(</span><span class="s1">y</span><span class="s2">=</span><span class="s1">wave_a</span><span class="s2">.</span><span class="s1">astype</span><span class="s2">(</span><span class="s1">float</span><span class="s2">), </span><span class="s1">sr</span><span class="s2">=</span><span class="s1">SAMPLE_RATE</span><span class="s2">)</span>
+    <span class="s1">mfcc_b </span><span class="s2">= </span><span class="s1">librosa</span><span class="s2">.</span><span class="s1">feature</span><span class="s2">.</span><span class="s1">mfcc</span><span class="s2">(</span><span class="s1">y</span><span class="s2">=</span><span class="s1">wave_b</span><span class="s2">.</span><span class="s1">astype</span><span class="s2">(</span><span class="s1">float</span><span class="s2">), </span><span class="s1">sr</span><span class="s2">=</span><span class="s1">SAMPLE_RATE</span><span class="s2">)</span>
+    <span class="s4"># trim to same length</span>
+    <span class="s1">n </span><span class="s2">= </span><span class="s1">min</span><span class="s2">(</span><span class="s1">mfcc_a</span><span class="s2">.</span><span class="s1">shape</span><span class="s2">[</span><span class="s3">1</span><span class="s2">], </span><span class="s1">mfcc_b</span><span class="s2">.</span><span class="s1">shape</span><span class="s2">[</span><span class="s3">1</span><span class="s2">])</span>
+    <span class="s0">return </span><span class="s1">np</span><span class="s2">.</span><span class="s1">mean</span><span class="s2">((</span><span class="s1">mfcc_a</span><span class="s2">[:, :</span><span class="s1">n</span><span class="s2">] - </span><span class="s1">mfcc_b</span><span class="s2">[:, :</span><span class="s1">n</span><span class="s2">]) ** </span><span class="s3">2</span><span class="s2">)</span>
+
+
+<span class="s0">class </span><span class="s1">Learning</span><span class="s2">:</span>
+    <span class="s0">def </span><span class="s1">__init__</span><span class="s2">(</span><span class="s1">self</span><span class="s2">, </span><span class="s1">tutor_wave</span><span class="s2">, </span><span class="s1">bird</span><span class="s2">):</span>
+        <span class="s1">self</span><span class="s2">.</span><span class="s1">tutor_wave </span><span class="s2">= </span><span class="s1">tutor_wave</span>
+        <span class="s1">self</span><span class="s2">.</span><span class="s1">bird </span><span class="s2">= </span><span class="s1">bird</span>
+        <span class="s1">self</span><span class="s2">.</span><span class="s1">error_history </span><span class="s2">= []</span>
+
+    <span class="s0">def </span><span class="s1">run</span><span class="s2">(</span><span class="s1">self</span><span class="s2">, </span><span class="s1">steps</span><span class="s2">=</span><span class="s3">500</span><span class="s2">, </span><span class="s1">export_every</span><span class="s2">=</span><span class="s3">100</span><span class="s2">):</span>
+        <span class="s1">self</span><span class="s2">.</span><span class="s1">current_error </span><span class="s2">= </span><span class="s1">mfcc_error</span><span class="s2">(</span><span class="s1">self</span><span class="s2">.</span><span class="s1">bird</span><span class="s2">.</span><span class="s1">song</span><span class="s2">, </span><span class="s1">self</span><span class="s2">.</span><span class="s1">tutor_wave</span><span class="s2">)</span>
+        <span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">range</span><span class="s2">(</span><span class="s1">steps</span><span class="s2">):</span>
+            <span class="s1">strength </span><span class="s2">= </span><span class="s1">max</span><span class="s2">(</span><span class="s3">0.05</span><span class="s2">, </span><span class="s3">1.0 </span><span class="s2">* (</span><span class="s3">1 </span><span class="s2">- </span><span class="s1">i </span><span class="s2">/ </span><span class="s1">steps</span><span class="s2">))</span>
+            <span class="s1">self</span><span class="s2">.</span><span class="s1">step</span><span class="s2">(</span><span class="s1">strength</span><span class="s2">)</span>
+            <span class="s0">if </span><span class="s1">i </span><span class="s2">% </span><span class="s1">export_every </span><span class="s2">== </span><span class="s3">0</span><span class="s2">:</span>
+                <span class="s1">self</span><span class="s2">.</span><span class="s1">bird</span><span class="s2">.</span><span class="s1">export_audio</span><span class="s2">(</span><span class="s1">i</span><span class="s2">)</span>
+                <span class="s1">print</span><span class="s2">(</span><span class="s5">f&quot;Step </span><span class="s0">{</span><span class="s1">i</span><span class="s0">}</span><span class="s5">: error </span><span class="s0">{</span><span class="s1">self</span><span class="s2">.</span><span class="s1">error_history</span><span class="s2">[-</span><span class="s3">1</span><span class="s2">]</span><span class="s0">:</span><span class="s5">.4f</span><span class="s0">}</span><span class="s5">&quot;</span><span class="s2">)</span>
+
+    <span class="s0">def </span><span class="s1">step</span><span class="s2">(</span><span class="s1">self</span><span class="s2">, </span><span class="s1">strength</span><span class="s2">=</span><span class="s3">0.3</span><span class="s2">, </span><span class="s1">n_candidates</span><span class="s2">=</span><span class="s3">5</span><span class="s2">):</span>
+        <span class="s1">best_error </span><span class="s2">= </span><span class="s1">self</span><span class="s2">.</span><span class="s1">current_error</span>
+        <span class="s1">best_events </span><span class="s2">= </span><span class="s0">None</span>
+        <span class="s1">best_wave </span><span class="s2">= </span><span class="s0">None</span>
+
+        <span class="s0">for </span><span class="s1">_ </span><span class="s0">in </span><span class="s1">range</span><span class="s2">(</span><span class="s1">n_candidates</span><span class="s2">):</span>
+            <span class="s4"># early on: mostly structural, later: mostly parameter tuning</span>
+            <span class="s0">if </span><span class="s1">random</span><span class="s2">.</span><span class="s1">random</span><span class="s2">() &lt; </span><span class="s1">strength</span><span class="s2">:</span>
+                <span class="s1">candidate_events </span><span class="s2">= </span><span class="s1">self</span><span class="s2">.</span><span class="s1">bird</span><span class="s2">.</span><span class="s1">_mutate_structure</span><span class="s2">()</span>
+            <span class="s0">else</span><span class="s2">:</span>
+                <span class="s1">candidate_events </span><span class="s2">= </span><span class="s1">self</span><span class="s2">.</span><span class="s1">bird</span><span class="s2">.</span><span class="s1">_mutate</span><span class="s2">(</span><span class="s1">strength</span><span class="s2">)</span>
+
+            <span class="s1">candidate_wave </span><span class="s2">= </span><span class="s1">self</span><span class="s2">.</span><span class="s1">bird</span><span class="s2">.</span><span class="s1">_render</span><span class="s2">(</span><span class="s1">candidate_events</span><span class="s2">)</span>
+            <span class="s1">candidate_error </span><span class="s2">= </span><span class="s1">mfcc_error</span><span class="s2">(</span><span class="s1">candidate_wave</span><span class="s2">, </span><span class="s1">self</span><span class="s2">.</span><span class="s1">tutor_wave</span><span class="s2">)</span>
+            <span class="s0">if </span><span class="s1">candidate_error </span><span class="s2">&lt; </span><span class="s1">best_error</span><span class="s2">:</span>
+                <span class="s1">best_error </span><span class="s2">= </span><span class="s1">candidate_error</span>
+                <span class="s1">best_events </span><span class="s2">= </span><span class="s1">candidate_events</span>
+                <span class="s1">best_wave </span><span class="s2">= </span><span class="s1">candidate_wave</span>
+
+        <span class="s0">if </span><span class="s1">best_events </span><span class="s0">is not None</span><span class="s2">:</span>
+            <span class="s1">self</span><span class="s2">.</span><span class="s1">bird</span><span class="s2">.</span><span class="s1">events </span><span class="s2">= </span><span class="s1">best_events</span>
+            <span class="s1">self</span><span class="s2">.</span><span class="s1">bird</span><span class="s2">.</span><span class="s1">song </span><span class="s2">= </span><span class="s1">best_wave</span>
+            <span class="s1">self</span><span class="s2">.</span><span class="s1">current_error </span><span class="s2">= </span><span class="s1">best_error</span>
+
+        <span class="s1">self</span><span class="s2">.</span><span class="s1">error_history</span><span class="s2">.</span><span class="s1">append</span><span class="s2">(</span><span class="s1">self</span><span class="s2">.</span><span class="s1">current_error</span><span class="s2">)</span></pre>
+</body>
+</html>

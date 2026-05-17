@@ -1,0 +1,34 @@
+<html>
+<head>
+<title>audio.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #2aacb8;}
+.s4 { color: #6aab73;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+audio.py</font>
+</center></td></tr></table>
+<pre><span class="s0">import </span><span class="s1">numpy </span><span class="s0">as </span><span class="s1">np</span>
+<span class="s0">import </span><span class="s1">sounddevice </span><span class="s0">as </span><span class="s1">sd</span>
+<span class="s0">from </span><span class="s1">scipy</span><span class="s2">.</span><span class="s1">io</span><span class="s2">.</span><span class="s1">wavfile </span><span class="s0">import </span><span class="s1">write</span><span class="s2">, </span><span class="s1">read</span>
+
+<span class="s1">SAMPLE_RATE </span><span class="s2">= </span><span class="s3">44100</span>
+
+<span class="s0">def </span><span class="s1">play_wav</span><span class="s2">(</span><span class="s1">filename</span><span class="s2">):</span>
+    <span class="s1">sr</span><span class="s2">, </span><span class="s1">data </span><span class="s2">= </span><span class="s1">read</span><span class="s2">(</span><span class="s1">filename</span><span class="s2">)</span>
+    <span class="s1">sd</span><span class="s2">.</span><span class="s1">play</span><span class="s2">(</span><span class="s1">data</span><span class="s2">.</span><span class="s1">astype</span><span class="s2">(</span><span class="s4">&quot;float32&quot;</span><span class="s2">) / </span><span class="s3">32767</span><span class="s2">, </span><span class="s1">sr</span><span class="s2">)</span>
+    <span class="s1">sd</span><span class="s2">.</span><span class="s1">wait</span><span class="s2">()</span>
+
+<span class="s0">def </span><span class="s1">save_wav</span><span class="s2">(</span><span class="s1">waveform</span><span class="s2">, </span><span class="s1">filename</span><span class="s2">):</span>
+    <span class="s1">audio </span><span class="s2">= </span><span class="s1">np</span><span class="s2">.</span><span class="s1">int16</span><span class="s2">(</span><span class="s1">waveform </span><span class="s2">* </span><span class="s3">32767</span><span class="s2">)</span>
+    <span class="s1">write</span><span class="s2">(</span><span class="s1">filename</span><span class="s2">, </span><span class="s1">SAMPLE_RATE</span><span class="s2">, </span><span class="s1">audio</span><span class="s2">)</span></pre>
+</body>
+</html>

@@ -1,0 +1,97 @@
+<html>
+<head>
+<title>main.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #6aab73;}
+.s4 { color: #7a7e85;}
+.s5 { color: #2aacb8;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+main.py</font>
+</center></td></tr></table>
+<pre><span class="s0">import </span><span class="s1">os</span>
+<span class="s0">import </span><span class="s1">sounddevice </span><span class="s0">as </span><span class="s1">sd</span>
+<span class="s0">from </span><span class="s1">tutor </span><span class="s0">import </span><span class="s1">create_tutor_song</span>
+<span class="s0">from </span><span class="s1">bird </span><span class="s0">import </span><span class="s1">Bird</span>
+<span class="s0">from </span><span class="s1">learning </span><span class="s0">import </span><span class="s1">Learning</span>
+<span class="s0">from </span><span class="s1">audio </span><span class="s0">import </span><span class="s1">play_wav</span>
+<span class="s0">import </span><span class="s1">matplotlib</span><span class="s2">.</span><span class="s1">pyplot </span><span class="s0">as </span><span class="s1">plt</span>
+<span class="s0">import </span><span class="s1">librosa</span>
+<span class="s0">import </span><span class="s1">numpy </span><span class="s0">as </span><span class="s1">np</span>
+<span class="s0">from </span><span class="s1">scipy</span><span class="s2">.</span><span class="s1">io</span><span class="s2">.</span><span class="s1">wavfile </span><span class="s0">import </span><span class="s1">read</span>
+<span class="s0">import </span><span class="s1">matplotlib</span><span class="s2">.</span><span class="s1">pyplot </span><span class="s0">as </span><span class="s1">plt</span>
+<span class="s0">import </span><span class="s1">librosa</span>
+<span class="s0">from </span><span class="s1">audio </span><span class="s0">import </span><span class="s1">save_wav</span>
+
+<span class="s1">os</span><span class="s2">.</span><span class="s1">makedirs</span><span class="s2">(</span><span class="s3">&quot;outputs&quot;</span><span class="s2">, </span><span class="s1">exist_ok</span><span class="s2">=</span><span class="s0">True</span><span class="s2">)</span>
+
+<span class="s1">tutor_wave </span><span class="s2">= </span><span class="s1">create_tutor_song</span><span class="s2">()</span>
+<span class="s1">save_wav</span><span class="s2">(</span><span class="s1">tutor_wave</span><span class="s2">, </span><span class="s3">&quot;outputs/tutor.wav&quot;</span><span class="s2">)</span>
+
+<span class="s4">#sd.play(tutor_wave.astype(&quot;float32&quot;), 44100)</span>
+<span class="s4">#sd.wait()</span>
+
+<span class="s1">bird </span><span class="s2">= </span><span class="s1">Bird</span><span class="s2">(</span><span class="s1">tutor_wave</span><span class="s2">)</span>
+<span class="s4">#sd.play(bird.sing().astype(&quot;float32&quot;), 44100)</span>
+<span class="s4">#sd.wait()</span>
+
+<span class="s1">learner </span><span class="s2">= </span><span class="s1">Learning</span><span class="s2">(</span><span class="s1">tutor_wave</span><span class="s2">, </span><span class="s1">bird</span><span class="s2">)</span>
+<span class="s1">learner</span><span class="s2">.</span><span class="s1">run</span><span class="s2">(</span><span class="s1">steps</span><span class="s2">=</span><span class="s5">500</span><span class="s2">, </span><span class="s1">export_every</span><span class="s2">=</span><span class="s5">100</span><span class="s2">)</span>
+
+<span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">range</span><span class="s2">(</span><span class="s5">0</span><span class="s2">, </span><span class="s5">500</span><span class="s2">, </span><span class="s5">100</span><span class="s2">):</span>
+    <span class="s1">filename </span><span class="s2">= </span><span class="s3">f&quot;outputs/bird_</span><span class="s0">{</span><span class="s1">i</span><span class="s0">}</span><span class="s3">.wav&quot;</span>
+    <span class="s1">print</span><span class="s2">(</span><span class="s3">f&quot;Saving </span><span class="s0">{</span><span class="s1">filename</span><span class="s0">}</span><span class="s3">&quot;</span><span class="s2">)</span>
+    <span class="s0">if </span><span class="s1">os</span><span class="s2">.</span><span class="s1">path</span><span class="s2">.</span><span class="s1">exists</span><span class="s2">(</span><span class="s1">filename</span><span class="s2">):</span>
+        <span class="s1">print</span><span class="s2">(</span><span class="s3">f&quot;Playing </span><span class="s0">{</span><span class="s1">filename</span><span class="s0">}</span><span class="s3">&quot;</span><span class="s2">)</span>
+        <span class="s4">#play_wav(filename)</span>
+
+
+
+
+<span class="s0">def </span><span class="s1">plot_frequency_progression</span><span class="s2">(</span><span class="s1">tutor_wave</span><span class="s2">, </span><span class="s1">steps</span><span class="s2">, </span><span class="s1">sr</span><span class="s2">=</span><span class="s5">44100</span><span class="s2">):</span>
+    <span class="s1">step_list </span><span class="s2">= </span><span class="s1">list</span><span class="s2">(</span><span class="s1">steps</span><span class="s2">)</span>
+    <span class="s1">n_plots </span><span class="s2">= </span><span class="s1">len</span><span class="s2">(</span><span class="s1">step_list</span><span class="s2">) + </span><span class="s5">1</span>
+
+    <span class="s1">fig</span><span class="s2">, </span><span class="s1">axes </span><span class="s2">= </span><span class="s1">plt</span><span class="s2">.</span><span class="s1">subplots</span><span class="s2">(</span><span class="s1">n_plots</span><span class="s2">, </span><span class="s5">1</span><span class="s2">, </span><span class="s1">figsize</span><span class="s2">=(</span><span class="s5">12</span><span class="s2">, </span><span class="s5">2 </span><span class="s2">* </span><span class="s1">n_plots</span><span class="s2">), </span><span class="s1">sharex</span><span class="s2">=</span><span class="s0">True</span><span class="s2">)</span>
+
+    <span class="s0">def </span><span class="s1">plot_f0</span><span class="s2">(</span><span class="s1">ax</span><span class="s2">, </span><span class="s1">wave</span><span class="s2">, </span><span class="s1">title</span><span class="s2">):</span>
+        <span class="s1">f0 </span><span class="s2">= </span><span class="s1">librosa</span><span class="s2">.</span><span class="s1">yin</span><span class="s2">(</span><span class="s1">wave</span><span class="s2">.</span><span class="s1">astype</span><span class="s2">(</span><span class="s1">float</span><span class="s2">), </span><span class="s1">fmin</span><span class="s2">=</span><span class="s5">200</span><span class="s2">, </span><span class="s1">fmax</span><span class="s2">=</span><span class="s5">1200</span><span class="s2">, </span><span class="s1">sr</span><span class="s2">=</span><span class="s1">sr</span><span class="s2">)</span>
+        <span class="s1">ax</span><span class="s2">.</span><span class="s1">plot</span><span class="s2">(</span><span class="s1">f0</span><span class="s2">)</span>
+        <span class="s1">ax</span><span class="s2">.</span><span class="s1">set_title</span><span class="s2">(</span><span class="s1">title</span><span class="s2">)</span>
+        <span class="s1">ax</span><span class="s2">.</span><span class="s1">set_ylabel</span><span class="s2">(</span><span class="s3">&quot;Hz&quot;</span><span class="s2">)</span>
+        <span class="s1">ax</span><span class="s2">.</span><span class="s1">set_ylim</span><span class="s2">(</span><span class="s5">200</span><span class="s2">, </span><span class="s5">1200</span><span class="s2">)</span>
+
+    <span class="s1">plot_f0</span><span class="s2">(</span><span class="s1">axes</span><span class="s2">[</span><span class="s5">0</span><span class="s2">], </span><span class="s1">tutor_wave</span><span class="s2">, </span><span class="s3">&quot;Tutor&quot;</span><span class="s2">)</span>
+
+    <span class="s0">for </span><span class="s1">idx</span><span class="s2">, </span><span class="s1">i </span><span class="s0">in </span><span class="s1">enumerate</span><span class="s2">(</span><span class="s1">step_list</span><span class="s2">):</span>
+        <span class="s1">filename </span><span class="s2">= </span><span class="s3">f&quot;outputs/bird_</span><span class="s0">{</span><span class="s1">i</span><span class="s0">}</span><span class="s3">.wav&quot;</span>
+        <span class="s0">if </span><span class="s1">os</span><span class="s2">.</span><span class="s1">path</span><span class="s2">.</span><span class="s1">exists</span><span class="s2">(</span><span class="s1">filename</span><span class="s2">):</span>
+            <span class="s1">_</span><span class="s2">, </span><span class="s1">data </span><span class="s2">= </span><span class="s1">read</span><span class="s2">(</span><span class="s1">filename</span><span class="s2">)</span>
+            <span class="s1">wave </span><span class="s2">= </span><span class="s1">data</span><span class="s2">.</span><span class="s1">astype</span><span class="s2">(</span><span class="s1">float</span><span class="s2">) / </span><span class="s5">32767</span>
+            <span class="s1">plot_f0</span><span class="s2">(</span><span class="s1">axes</span><span class="s2">[</span><span class="s1">idx </span><span class="s2">+ </span><span class="s5">1</span><span class="s2">], </span><span class="s1">wave</span><span class="s2">, </span><span class="s3">f&quot;Step </span><span class="s0">{</span><span class="s1">i</span><span class="s0">}</span><span class="s3">&quot;</span><span class="s2">)</span>
+
+    <span class="s1">plt</span><span class="s2">.</span><span class="s1">xlabel</span><span class="s2">(</span><span class="s3">&quot;Frame&quot;</span><span class="s2">)</span>
+    <span class="s1">plt</span><span class="s2">.</span><span class="s1">tight_layout</span><span class="s2">()</span>
+    <span class="s1">plt</span><span class="s2">.</span><span class="s1">savefig</span><span class="s2">(</span><span class="s3">&quot;outputs/frequency_progression.png&quot;</span><span class="s2">, </span><span class="s1">dpi</span><span class="s2">=</span><span class="s5">150</span><span class="s2">)</span>
+    <span class="s1">plt</span><span class="s2">.</span><span class="s1">show</span><span class="s2">()</span>
+
+<span class="s1">plot_frequency_progression</span><span class="s2">(</span><span class="s1">tutor_wave</span><span class="s2">, </span><span class="s1">range</span><span class="s2">(</span><span class="s5">0</span><span class="s2">, </span><span class="s5">500</span><span class="s2">, </span><span class="s5">100</span><span class="s2">))</span>
+
+<span class="s1">plt</span><span class="s2">.</span><span class="s1">figure</span><span class="s2">(</span><span class="s1">figsize</span><span class="s2">=(</span><span class="s5">10</span><span class="s2">, </span><span class="s5">4</span><span class="s2">))</span>
+<span class="s1">plt</span><span class="s2">.</span><span class="s1">plot</span><span class="s2">(</span><span class="s1">learner</span><span class="s2">.</span><span class="s1">error_history</span><span class="s2">)</span>
+<span class="s1">plt</span><span class="s2">.</span><span class="s1">title</span><span class="s2">(</span><span class="s3">&quot;Bird learning over time&quot;</span><span class="s2">)</span>
+<span class="s1">plt</span><span class="s2">.</span><span class="s1">xlabel</span><span class="s2">(</span><span class="s3">&quot;Step&quot;</span><span class="s2">)</span>
+<span class="s1">plt</span><span class="s2">.</span><span class="s1">ylabel</span><span class="s2">(</span><span class="s3">&quot;MFCC error&quot;</span><span class="s2">)</span>
+<span class="s1">plt</span><span class="s2">.</span><span class="s1">tight_layout</span><span class="s2">()</span>
+<span class="s1">plt</span><span class="s2">.</span><span class="s1">savefig</span><span class="s2">(</span><span class="s3">&quot;outputs/learning.png&quot;</span><span class="s2">, </span><span class="s1">dpi</span><span class="s2">=</span><span class="s5">150</span><span class="s2">)</span>
+<span class="s1">plt</span><span class="s2">.</span><span class="s1">show</span><span class="s2">()</span></pre>
+</body>
+</html>
