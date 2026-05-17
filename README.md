@@ -1,6 +1,4 @@
-# birdsong-learning
-computational neuroscience
-# Birdsong Learning Simulator
+# Birdsong Learning Simulator, course NB3014 Computational Neuroscience
 
 A bio-inspired simulation of how juvenile birds learn to sing by imitating a tutor. A bird starts with a random song and iteratively refines it over 500 steps until it sounds as close as possible to the tutor.
 
